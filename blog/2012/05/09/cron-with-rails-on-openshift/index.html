@@ -1,0 +1,225 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <title>Zargon</title>
+
+  <meta name="author" content="Jordan OMara">
+  
+  <meta name="description" content="Cron With Rails on Openshift May 9th, 2012 Openshift has a cron cartridge that&#8217;s very easy to install and configure. You
+simply install the &hellip;">
+  
+  
+
+  <link rel="canonical" href="http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Zargon" type="application/atom+xml">
+</head>
+  
+<body class="default">
+  <div id="wrapper">
+    <div id="header">
+  <h1><a href="/">Zargon</a></h1>
+  
+    <p>You have fallen into a pit trap</p>
+  
+</div>
+<ul id="social-links">
+  
+    <li><a class="feed" href="/atom.xml" title="RSS">RSS</a></li>
+  
+  
+    <li><a class="twitter" href="http://twitter.com/jsomara" title="Twitter">Twitter</a></li>
+  
+  
+    <li> <a class="github" href="https://github.com/jsomara" title="GitHub">GitHub</a> </li>
+  
+</ul>
+<div class="clear"></div>
+<ul id="nav">
+  
+    <li> <a href="/">blog</a> </li>
+  
+
+  
+    <li><a href="/blog/archives">archives</a></li>
+  
+</ul>
+
+    <div id="main"> <div class="post-header">
+  
+    <h1 class="post-title">Cron With Rails on Openshift</h1>
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-09T11:38:00-04:00" pubdate data-updated="true">May 9<span>th</span>, 2012</time>
+</div>
+
+<div class="post-content"><p>Openshift has a cron cartridge that&#8217;s very easy to install and configure. You
+simply install the cron cartridge:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rhc-ctl-app -a $appname -e add-cron-1.4</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And populate the directory tree in your app&#8217;s git repository:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>openshift
+</span><span class='line'>├── cron
+</span><span class='line'>│   ├── daily
+</span><span class='line'>│   │   └── my_script.rb
+</span><span class='line'>│   ├── hourly
+</span><span class='line'>│   ├── minutely
+</span><span class='line'>│   ├── monthly
+</span><span class='line'>│   ├── README.cron
+</span><span class='line'>│   └── weekly
+</span><span class='line'>│       ├── chrono.dat
+</span><span class='line'>│       ├── chronograph
+</span><span class='line'>│       ├── jobs.allow
+</span><span class='line'>│       ├── jobs.deny
+</span><span class='line'>│       └── README
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The trick is that unlike Heroku, the Openshift cron system is basically just
+like regular linux cron. They do not execute (by default) in your application&#8217;s
+environment. Thankfully, it&#8217;s very easy to set up your scripts to run this way.</p>
+
+<figure class='code'><figcaption><span>ruby cron example</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'><span class="c1"># this script will default to DEVELOPMENT if you dont force it</span>
+</span><span class='line'><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;RAILS_ENV&#39;</span><span class="o">]</span> <span class="o">||=</span> <span class="s1">&#39;production&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;./config/environment&quot;</span><span class="p">,</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;OPENSHIFT_REPO_DIR&#39;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Rails</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span> <span class="s1">&#39;daily cron job!&#39;</span>
+</span><span class='line'><span class="no">MyHelper</span><span class="o">.</span><span class="n">do_something_daily</span><span class="p">(</span><span class="s1">&#39;internet&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It should be pretty obvious where to put your script files based on when you want
+them to run!</p>
+</div>
+
+
+<div class="post-single">
+  <div class="post-meta">
+    
+
+<span class="categories">
+  Categories:
+  
+    <a class='category' href='/blog/categories/openshift/'>openshift</a>, <a class='category' href='/blog/categories/rails/'>rails</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift/" data-via="jsomara" data-counturl="http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+  </div>
+  <div class="clear"></div>
+
+  
+</div>
+ </div>
+    <div id="footer">
+  <div class="panels">
+    <div class="license">
+      <h2>License</h2>
+      <p>如非特别声明，本 Blog 的文章由 Jordan OMara 创作，采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">知识共享署名-非商业性使用-相同方式共享 3.0 Unported 许可协议</a>进行许可。</p>
+    </div>
+
+    <div class="posts">
+      <h2>Recent Posts</h2>
+      <ul>
+        
+          <li>
+            <a href="/blog/2012/07/10/modular-ldap-auth-for-ruby/">Modular LDAP auth for Ruby</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2012/05/09/cron-with-rails-on-openshift/">Cron with Rails on Openshift</a>
+          </li>
+        
+      </ul>
+    </div>
+
+    <div class="douban">
+      <h2>Reading</h2>
+      
+        <p>Please set your Douban ID in _config.yml</p>
+      
+    </div>
+  </div>
+
+  <p class="powered">
+    Powered by <a href="http://octopress.org">Octopress</a> and <a href="https://github.com/iwinux/compbits">Compbits</a>
+  </p>
+</div>
+
+  </div> <!-- #wrapper end -->
+
+  
+
+  
+
+
+  
+
+  
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+</body>
+</html>
