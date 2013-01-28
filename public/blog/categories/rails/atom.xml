@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rails | Zargon]]></title>
+  <link href="http://jsomara.github.com/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://jsomara.github.com/"/>
+  <updated>2013-01-26T18:14:18-05:00</updated>
+  <id>http://jsomara.github.com/</id>
+  <author>
+    <name><![CDATA[Jordan OMara]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Modular LDAP auth for Ruby]]></title>
+    <link href="http://jsomara.github.com/blog/2012/07/10/modular-ldap-auth-for-ruby/"/>
+    <updated>2012-07-10T11:08:00-04:00</updated>
+    <id>http://jsomara.github.com/blog/2012/07/10/modular-ldap-auth-for-ruby</id>
+    <content type="html"><![CDATA[<p>ldap fluff provides an easy way for your ruby apps to query regular LDAP,
+FreeIPA and Active Directory systems for authentication and authorization.</p>
+
+<p>It's currently being used in the <a href="https://github.com/Katello/katello">Katello Project</a>
+to provide the auth system with authentication and group membership info</p>
+
+<p>You can easily add ldap fluff to your system, especially if you're already using devise
+or something similar, to add additional auth backend support. Here's how to get started:</p>
+
+<p>```
+gem install ldap_fluff</p>
+
+<p>```</p>
+
+<p>You need /etc/ldap_fluff.yml to configure your LDAP connection. An example is provided in
+the <a href="https://github.com/jsomara/ldap_fluff/blob/master/etc/ldap_fluff.yml">source repo</a></p>
+
+<p>Here's an example to connect to my FreeIPA server, named AMERICA</p>
+
+<p>``` yaml config example
+host:  america
+port: 389
+encryption: start_tls
+base_dn: dc=jomara,dc=redhat,dc=com
+group_base: dc=jomara,dc=redhat,dc=com
+server_type: free_ipa
+service_user: admin
+service_pass: reallylookingforwardtotheweekend</p>
+
+<p>```</p>
+
+<p>The service_user doesn't have to be admin (and probably shouldn't be - but I'm
+no LDAP admin), but just any user that has R/O access to user &amp; group data</p>
+
+<p>Next, fire up irb or your rails console</p>
+
+<p>``` ruby irb fluff example
+irb(main):001:0> require 'ldap_fluff'
+irb(main):002:0> ldap = LdapFluff.new
+=> #&lt;LdapFluff:0x7f7e9ca37358>...
+irb(main):003:0> ldap.group_list('rstantz')
+=> ["ipausers", "ghostbusters", "broskies", "eighties"]
+irb(main):005:0> ldap.is_in_groups?('rstantz',['ghostbusters'])
+=> true
+irb(main):006:0> ldap.is_in_groups?('rstantz',['transformers','ghostbusters'])
+=> false
+irb(main):007:0> ldap.is_in_groups?('rstantz',['transformers'])
+=> false
+irb(main):009:0> ldap.authenticate?('rstantz','bustin')
+=> false
+irb(main):010:0> ldap.authenticate?('rstantz','ghostbustin')
+=> true</p>
+
+<p>```</p>
+
+<p>Note that the "is in groups?"  method is an AND operation. These methods should
+provide all you need to support read only authorization and authentication
+based on LDAP and LDAP groups.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cron with Rails on Openshift]]></title>
+    <link href="http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift/"/>
+    <updated>2012-05-09T11:38:00-04:00</updated>
+    <id>http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift</id>
+    <content type="html"><![CDATA[<p>Openshift has a cron cartridge that's very easy to install and configure. You
+simply install the cron cartridge:</p>
+
+<p><code>
+rhc-ctl-app -a $appname -e add-cron-1.4
+</code></p>
+
+<p>And populate the directory tree in your app's git repository:</p>
+
+<p>```
+openshift
+├── cron
+│   ├── daily
+│   │   └── my_script.rb
+│   ├── hourly
+│   ├── minutely
+│   ├── monthly
+│   ├── README.cron
+│   └── weekly
+│       ├── chrono.dat
+│       ├── chronograph
+│       ├── jobs.allow
+│       ├── jobs.deny
+│       └── README</p>
+
+<p>```</p>
+
+<p>The trick is that unlike Heroku, the Openshift cron system is basically just
+like regular linux cron. They do not execute (by default) in your application's
+environment. Thankfully, it's very easy to set up your scripts to run this way.</p>
+
+<p>``` ruby ruby cron example</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<h1>this script will default to DEVELOPMENT if you dont force it</h1>
+
+<p>ENV['RAILS_ENV'] ||= 'production'</p>
+
+<p>require File.expand_path("./config/environment", ENV['OPENSHIFT_REPO_DIR'])</p>
+
+<p>Rails.logger.debug 'daily cron job!'
+MyHelper.do_something_daily('internet')</p>
+
+<p>```
+It should be pretty obvious where to put your script files based on when you want
+them to run!</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: openshift | Zargon]]></title>
+  <link href="http://jsomara.github.com/blog/categories/openshift/atom.xml" rel="self"/>
+  <link href="http://jsomara.github.com/"/>
+  <updated>2013-01-26T18:14:18-05:00</updated>
+  <id>http://jsomara.github.com/</id>
+  <author>
+    <name><![CDATA[Jordan OMara]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cron with Rails on Openshift]]></title>
+    <link href="http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift/"/>
+    <updated>2012-05-09T11:38:00-04:00</updated>
+    <id>http://jsomara.github.com/blog/2012/05/09/cron-with-rails-on-openshift</id>
+    <content type="html"><![CDATA[<p>Openshift has a cron cartridge that's very easy to install and configure. You
+simply install the cron cartridge:</p>
+
+<p><code>
+rhc-ctl-app -a $appname -e add-cron-1.4
+</code></p>
+
+<p>And populate the directory tree in your app's git repository:</p>
+
+<p>```
+openshift
+├── cron
+│   ├── daily
+│   │   └── my_script.rb
+│   ├── hourly
+│   ├── minutely
+│   ├── monthly
+│   ├── README.cron
+│   └── weekly
+│       ├── chrono.dat
+│       ├── chronograph
+│       ├── jobs.allow
+│       ├── jobs.deny
+│       └── README</p>
+
+<p>```</p>
+
+<p>The trick is that unlike Heroku, the Openshift cron system is basically just
+like regular linux cron. They do not execute (by default) in your application's
+environment. Thankfully, it's very easy to set up your scripts to run this way.</p>
+
+<p>``` ruby ruby cron example</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<h1>this script will default to DEVELOPMENT if you dont force it</h1>
+
+<p>ENV['RAILS_ENV'] ||= 'production'</p>
+
+<p>require File.expand_path("./config/environment", ENV['OPENSHIFT_REPO_DIR'])</p>
+
+<p>Rails.logger.debug 'daily cron job!'
+MyHelper.do_something_daily('internet')</p>
+
+<p>```
+It should be pretty obvious where to put your script files based on when you want
+them to run!</p>
+]]></content>
+  </entry>
+  
+</feed>

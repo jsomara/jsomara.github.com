@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Zargon]]></title>
+  <title><![CDATA[You have fallen into a pit trap]]></title>
   <link href="http://jsomara.github.com/atom.xml" rel="self"/>
   <link href="http://jsomara.github.com/"/>
-  <updated>2012-07-18T14:36:17-04:00</updated>
+  <updated>2013-01-27T19:49:53-05:00</updated>
   <id>http://jsomara.github.com/</id>
   <author>
     <name><![CDATA[Jordan OMara]]></name>
@@ -12,6 +12,38 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hero Sheets - The Pathfinder character generator]]></title>
+    <link href="http://jsomara.github.com/blog/2013/01/27/hero-sheets-pathfinder-character-sheets/"/>
+    <updated>2013-01-27T19:22:00-05:00</updated>
+    <id>http://jsomara.github.com/blog/2013/01/27/hero-sheets-pathfinder-character-sheets</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve started working on some software to improve management of <a href="http://www.herosheets.com">Pathfinder
+character sheets</a>. I play Pathfinder weekly, and
+while the game is quite nice, managing your character is an enormous pain in
+the ass. I constantly have to erase and rewrite stuff, people forget to bring
+their sheets and nobody knows how to level up. Surprisingly, nobody has really
+solved this problem with software.  WOTC provides a pretty nice tool for
+electronic character management for D&amp;D 4e, but it is surprisingly lacking in
+mobile support.</p>
+
+<p><img src="images/herosheets.png" alt="Hero Sheets logo" /></p>
+
+<p>There isn&#8217;t even a section of the Pathfinder rulebook that explicitly states
+how leveling up works. The rules can be inferred by understanding multiple
+sections of the book, but surprisingly there is no flow chart or even simple
+paragraph explanation. I hope to fix that! The first goal of Hero Sheets is to
+make it simple to create and level up characters. A clear, wizard(hah!)-like
+interface and the ability to print a nicely formatted PDF will be a great start
+and should hopefully please players everywhere.</p>
+
+<p>I plan on releasing the core rules module as an open source rubygem.
+I&#8217;ve mostly been working on the sign up page + blog right now, to help generate
+interest, but once the gem is a little more polished I&#8217;ll toss it up on github.
+Even if Hero Sheets isn&#8217;t successful, maybe the community can make something
+interesting!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Modular LDAP auth for Ruby]]></title>
