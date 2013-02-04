@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Modular LDAP auth for Ruby - You have fallen into a pit trap</title>
+  <meta name="author" content="Jordan OMara">
+
+  
+  <meta name="description" content="ldap fluff provides an easy way for your ruby apps to query regular LDAP,
+FreeIPA and Active Directory systems for authentication and authorization. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jsomara.github.com/blog/2012/07/10/modular-ldap-auth-for-ruby">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="You have fallen into a pit trap" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1>You have fallen into a pit trap</h1>
+  
+    <h2><a href="/">Zargon</a></h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation">
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jsomara.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Modular LDAP Auth for Ruby</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T11:08:00-04:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>ldap fluff provides an easy way for your ruby apps to query regular LDAP,
+FreeIPA and Active Directory systems for authentication and authorization.</p>
+
+<p>It&#8217;s currently being used in the <a href="https://github.com/Katello/katello">Katello Project</a>
+to provide the auth system with authentication and group membership info</p>
+
+<p>You can easily add ldap fluff to your system, especially if you&#8217;re already using devise
+or something similar, to add additional auth backend support. Here&#8217;s how to get started:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install ldap_fluff
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You need /etc/ldap_fluff.yml to configure your LDAP connection. An example is provided in
+the <a href="https://github.com/jsomara/ldap_fluff/blob/master/etc/ldap_fluff.yml">source repo</a></p>
+
+<p>Here&#8217;s an example to connect to my FreeIPA server, named AMERICA</p>
+
+<figure class='code'><figcaption><span>config example</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">america</span>
+</span><span class='line'><span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">389</span>
+</span><span class='line'><span class="l-Scalar-Plain">encryption</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">start_tls</span>
+</span><span class='line'><span class="l-Scalar-Plain">base_dn</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dc=jomara,dc=redhat,dc=com</span>
+</span><span class='line'><span class="l-Scalar-Plain">group_base</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dc=jomara,dc=redhat,dc=com</span>
+</span><span class='line'><span class="l-Scalar-Plain">server_type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">free_ipa</span>
+</span><span class='line'><span class="l-Scalar-Plain">service_user</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">admin</span>
+</span><span class='line'><span class="l-Scalar-Plain">service_pass</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">reallylookingforwardtotheweekend</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The service_user doesn&#8217;t have to be admin (and probably shouldn&#8217;t be - but I&#8217;m
+no LDAP admin), but just any user that has R/O access to user &amp; group data</p>
+
+<p>Next, fire up irb or your rails console</p>
+
+<figure class='code'><figcaption><span>irb fluff example </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">001</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="nb">require</span> <span class="s1">&#39;ldap_fluff&#39;</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">002</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span> <span class="o">=</span> <span class="no">LdapFluff</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="c1">#&lt;LdapFluff:0x7f7e9ca37358&gt;...</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">003</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">group_list</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;ipausers&quot;</span><span class="p">,</span> <span class="s2">&quot;ghostbusters&quot;</span><span class="p">,</span> <span class="s2">&quot;broskies&quot;</span><span class="p">,</span> <span class="s2">&quot;eighties&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">005</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">is_in_groups?</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">,</span><span class="o">[</span><span class="s1">&#39;ghostbusters&#39;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">006</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">is_in_groups?</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">,</span><span class="o">[</span><span class="s1">&#39;transformers&#39;</span><span class="p">,</span><span class="s1">&#39;ghostbusters&#39;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">007</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">is_in_groups?</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">,</span><span class="o">[</span><span class="s1">&#39;transformers&#39;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">00</span><span class="mi">9</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">authenticate?</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">,</span><span class="s1">&#39;bustin&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">010</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">ldap</span><span class="o">.</span><span class="n">authenticate?</span><span class="p">(</span><span class="s1">&#39;rstantz&#39;</span><span class="p">,</span><span class="s1">&#39;ghostbustin&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that the &#8220;is in groups?&#8221;  method is an AND operation. These methods should
+provide all you need to support read only authorization and authentication
+based on LDAP and LDAP groups.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn"><a href="/about" title="About the author (Jordan OMara)" rel="author">Jordan OMara</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T11:08:00-04:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/active-directory/'>active_directory</a>, <a class='category' href='/blog/categories/auth/'>auth</a>, <a class='category' href='/blog/categories/freeipa/'>freeipa</a>, <a class='category' href='/blog/categories/ldap/'>ldap</a>, <a class='category' href='/blog/categories/rails/'>rails</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://jsomara.github.com/blog/2012/07/10/modular-ldap-auth-for-ruby/" data-via="jsomara" data-counturl="http://jsomara.github.com/blog/2012/07/10/modular-ldap-auth-for-ruby/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/05/09/cron-with-rails-on-openshift/" title="Previous Post: Cron with Rails on Openshift">&laquo; Cron with Rails on Openshift</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/27/hero-sheets-pathfinder-character-sheets/" title="next Post: Hero Sheets - The Pathfinder character generator">Hero Sheets - The Pathfinder character generator &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Jordan OMara -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: xz, | You have fallen into a pit trap]]></title>
+  <link href="http://jsomara.github.com/blog/categories/xz-/atom.xml" rel="self"/>
+  <link href="http://jsomara.github.com/"/>
+  <updated>2013-02-04T15:39:14-05:00</updated>
+  <id>http://jsomara.github.com/</id>
+  <author>
+    <name><![CDATA[Jordan OMara]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using xz with ruby]]></title>
+    <link href="http://jsomara.github.com/blog/2013/02/04/using-xz-with-ruby/"/>
+    <updated>2013-02-04T15:28:00-05:00</updated>
+    <id>http://jsomara.github.com/blog/2013/02/04/using-xz-with-ruby</id>
+    <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/Xz">LZMA2 / xz</a> are the hottest new compression
+algorithms on the block. When I found out <a href="http://katello.org">Katello</a> would
+have to decrypt certain data payloads compressed with xz, I was excited to work
+on it.</p>
+
+<p>I found the excellent <a href="https://github.com/Quintus/ruby-xz">ruby-xz package</a> and
+got to work. My little bit of code (not quite ready for a pull request yet,
+otherwise I'd link it) would simply have to check a file on a remote server,
+figure out if the file was newer than the last check, and if so decrypt it and
+process it.</p>
+
+<p>This gem makes it so simple! You need to require 'open-uri' to open URLs as
+file streams first.</p>
+
+<p>The data I'm parsing is JSON, so I can't load the data in chunks. Random chunks
+of decompressed data would not be valid JSON.</p>
+
+<p>```
+require 'open-uri'
+require 'ruby-xz'</p>
+
+<p>...</p>
+
+<p>open(@url) do |f|
+  JSON.load(XZ.decompress_stream(f))
+end
+```</p>
+
+<p>Fast &amp; easy!</p>
+]]></content>
+  </entry>
+  
+</feed>

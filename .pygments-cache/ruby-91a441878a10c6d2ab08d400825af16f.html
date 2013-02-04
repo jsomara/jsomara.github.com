@@ -1,0 +1,10 @@
+<div class="highlight"><pre><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># this script will default to DEVELOPMENT if you dont force it</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;RAILS_ENV&#39;</span><span class="o">]</span> <span class="o">||=</span> <span class="s1">&#39;production&#39;</span>
+
+<span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;./config/environment&quot;</span><span class="p">,</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;OPENSHIFT_REPO_DIR&#39;</span><span class="o">]</span><span class="p">)</span> 
+
+<span class="no">Rails</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span> <span class="s1">&#39;daily cron job!&#39;</span>
+<span class="no">MyHelper</span><span class="o">.</span><span class="n">do_something_daily</span><span class="p">(</span><span class="s1">&#39;internet&#39;</span><span class="p">)</span>
+</pre>
+</div>
