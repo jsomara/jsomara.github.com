@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: epub, | Zargon]]></title>
+  <link href="http://jsomara.github.com/blog/categories/epub-/atom.xml" rel="self"/>
+  <link href="http://jsomara.github.com/"/>
+  <updated>2013-04-18T15:43:02-04:00</updated>
+  <id>http://jsomara.github.com/</id>
+  <author>
+    <name><![CDATA[Jordan OMara]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A Dance Game of Crows with Swords of Kings]]></title>
+    <link href="http://jsomara.github.com/blog/2013/04/18/a-dance-with-swords-of-kings/"/>
+    <updated>2013-04-18T14:56:00-04:00</updated>
+    <id>http://jsomara.github.com/blog/2013/04/18/a-dance-with-swords-of-kings</id>
+    <content type="html"><![CDATA[<p>A friend and I thought it would be fun to read A SONG OF ICE &amp; FIRE in order by
+character instead of the chapter order presented in the books. However, with
+regular physical books this would be an enormous pain in the ass. It would be a
+little easier with Kindle copies and a good chapter listing, but not good
+enough.</p>
+
+<p>I didn't know much about the various open book standards (epub, mobi) but I
+thought it might be worth taking a look at them to see how I could hack them up
+for this project. Thankfully epub is just essentially a zip archive and a
+collection of html files with a table of contents and some brief metadata. I
+went about writing <a href="https://github.com/jsomara/crows">a script</a> to automate the
+process.</p>
+
+<p>Obviously, it requires a collection of the books in epub format to work.
+Additionally, each epub publisher categorizes the chapters differently - you'll
+have to inspect the html and edit the chapter parsing part of crows.rb for your
+files.</p>
+
+<p>Right now, an <a href="http://validator.idpf.org/">online epub validator</a> says my epub
+isn't valid, but hopefully with a little more hacking I'll have a book that
+works on my devices.</p>
+
+<p>The real question is whether or not it will make sense to read the series like this!</p>
+]]></content>
+  </entry>
+  
+</feed>
